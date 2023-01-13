@@ -101,15 +101,3 @@ WHERE dea.continent IS NOT NULL
 SELECT *, (Concurrent_People_Vaccinated/population) *100
 FROM #PercentPopulationVaccinated
 
---Create view to store later
-CREATE VIEW RealPercentPopulationVaccinated AS 
-SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(CAST(vac.new_vaccinations AS BIGINT)) 
-OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS Concurrent_People_Vaccinated
-FROM SQLDataExploration.dbo.CovidDeaths dea
-JOIN SQLDataExploration.dbo.CovidVaccinations vac
-	ON dea.location=vac.location AND dea.date=vac.date
-WHERE dea.continent IS NOT NULL 
-
-/*The difference betweeen group by and partition by is that group by will roll up all the same values and have 1 single output column(look above) whereas partition by wont roll them up and you
-will have a column of the same value spanning the entire column. Good to know particular values.*/
-
